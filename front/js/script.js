@@ -12,17 +12,10 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         console.error(error);
     }
     // display products from the response obtained from the API
-    console.log(data);
-
-
-    const daddy = document.querySelector('#daddyCool');
-        daddy.classList.add('limitedWidthBlock');
+    const productsWrapper = document.getElementById("items");
 
     for ( i=0 ; i < data.length; i++ ) {
-        console.log(data[i]);
-
-        let newKanap = document.createElement('section');
-            newKanap.classList.add('items');
+        // console.log(data[i]);
 
         let newLinkKanap = document.createElement('a');
             newLinkKanap.href = "./product.html?id=" + data[i]._id;
@@ -41,20 +34,8 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             newDescriptionKanap.classList.add('productDescription');
             newDescriptionKanap.innerText = data[i].description;
 
-        newKanap.append(newLinkKanap);
+        newArticle.append(newDescriptionKanap, newImageKanap, newNameKanap);
         newLinkKanap.append(newArticle);
-        newArticle.append(newImageKanap);
-        newArticle.append(newNameKanap);
-        newArticle.append(newDescriptionKanap);
-        
-        daddy.append(newKanap);       
+        productsWrapper.appendChild(newLinkKanap);
     }
 });
-
-    // linkKanap.innerHTML = data[i].linkKanap;    
-    // nameKanap.innerHTML = data[i].name;
-    // descriptionKanap.innerHTML = data[i].description;
-    // imageKanap.src = data[i].imageUrl;
-    // imageKanap.alt = data[i].altTxt;
-  
-    // console.log(item);
