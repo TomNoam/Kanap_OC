@@ -13,7 +13,9 @@ function callTotalQuantity(cart) {
 }; 
 
 window.addEventListener('DOMContentLoaded', async (event) => {
-
+    
+    // TODO use Promise.all( to fetch the price of all products stored in local storage  ((((async-await)))) https://javascript.info/promise-api
+    // TODO once all promises are resolved, get the price for each product from the API result and display it
     let cart = JSON.parse(localStorage.getItem("cart"));
     console.log(cart);
         
@@ -82,7 +84,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         articleWrapper.appendChild(articleKanap); 
 
 
-        //------------ QUANTITY CHANGE------------//
+        //----------------------- QUANTITY CHANGE---------------------------//
         inputSettingsQuantity.addEventListener("change", function() {
             
             pSettingsQuantity.innerText = inputSettingsQuantity.value;
@@ -98,11 +100,198 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
             callTotalQuantity(cart);
         });
-        //--------------TOTAL TUNASSE-------------//
+        //----------------------------TOTAL PRICE-------------------------//
+        function callTotalPrice (cart) {
+            let totalPrice= 0;
+            if(cart) {
+                cart.forEach((product) => {
+                    totalPrice += parseInt(product.quantity)*parseInt(product.price);
+                });
+            }
+            
+            let spanTotalPrice=document.getElementById('totalPrice');
         
-                
+            spanTotalPrice.textContent = totalPrice;
+        
+        };
+        
+        inputSettingsQuantity.addEventListener("change", function() {     
+            callTotalPrice(cart);
+        });
+
+        //---------------------------DELETE FUNCTION---------------------------//
+        divDeleteSettings.addEventListener('click', function() {
+            let deleteTargetedProduct = divDeleteSettings.closest('article');
+
+            deleteTargetedProduct.remove();
+            
+            itemWillRemove = cart.find(product => product.color == deleteTargetedProduct.dataset.color && product.id == deleteTargetedProduct.dataset.id);
+            console.log(itemWillRemove);  
+            
+            cart = cart.filter(product => product != itemWillRemove );
+            
+            // console.log(cart);
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+
+            callTotalQuantity(cart); 
+            callTotalPrice(cart);
+        });
     }
           
     callTotalQuantity(cart); 
+    callTotalPrice(cart);
+
+    //---------------------------FORM-----------------------------------//
+    let form = document.getElementsByClassName('cart__order__form');
+
+    //----FIRSTNAME----//
+    firstName.addEventListener('change', function() {
+        validFirstName(this);
+    });
+
+    const validFirstName = function(inputFirstName) {
+        let firstNameRegExp = new RegExp(
+            /^[ a-zA-ZÀ-úœ'\-\’]{2,25}$/, 'g'
+        );
     
+        let testFirstName = firstNameRegExp.test(inputFirstName.value);        
+        let errorFirstName = document.querySelector('#firstNameErrorMsg');
+
+        if (testFirstName) {
+            errorFirstName.innerText = "";          
+        }else{
+            errorFirstName.innerText = "Invalide";
+        }
+        //  console.log(testFirstName);
+    };
+
+    //----LASTNAME----//
+    lastName.addEventListener('change', function() {
+        validLastName(this);
+    });
+
+    const validLastName = function(inputLastName) {
+        let LastNameRegExp = new RegExp(
+            /^[ a-zA-ZÀ-úœ'\-\’]{2,25}$/, 'g'
+        );
+    
+        let testLastName = LastNameRegExp.test(inputLastName.value);        
+        let errorLastName = document.querySelector('#lastNameErrorMsg');
+
+        if (testLastName) {
+            errorLastName.innerText = "";          
+        }else{
+            errorLastName.innerText = "Invalide";
+        }
+        //  console.log(testLastName);
+    };
+    
+    //----ADDRESS----//
+    address.addEventListener('change', function() {
+        validAddress(this);
+    });
+
+    const validAddress = function(inputAddress) {
+        let addressRegExp = new RegExp(
+            /^[ a-zA-ZÀ-úœ0-9999'\-\’]{5,40}$/, 'g'
+        );
+    
+        let testAddress = addressRegExp.test(inputAddress.value);        
+        let errorAddress = document.querySelector('#addressErrorMsg');
+
+        if (testAddress) {
+            errorAddress.innerText = "";          
+        }else{
+            errorAddress.innerText = "Invalide";
+        }
+        //  console.log(testAddress);
+    };
+
+    //----CITY----//
+    city.addEventListener('change', function() {
+        validCity(this);
+    });
+
+    const validCity = function(inputCity) {
+        let cityRegExp = new RegExp(
+            /^[ a-zA-ZÀ-úœ'\-\’]{2,25}$/, 'g'
+        );
+    
+        let testCity = cityRegExp.test(inputCity.value);        
+        let errorCity = document.querySelector('#cityErrorMsg');
+
+        if (testCity) {
+            errorCity.innerText = "";          
+        }else{
+            errorCity.innerText = "Invalide";
+        }
+        //  console.log(testCity);
+    };
+
+    //----EMAIL----//
+    email.addEventListener('change', function() {
+        validEmail(this);
+    });
+
+    const validEmail = function(inputEmail) {
+        let emailRegExp = new RegExp(
+            /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'g'
+        );
+    
+        let testEmail = emailRegExp.test(inputEmail.value);        
+        let errorEmail = document.querySelector('#emailErrorMsg');
+
+        if (testEmail) {
+            errorEmail.innerText = "";          
+        }else{
+            errorEmail.innerText = "Invalide";
+        }
+        //  console.log(testEmail);
+    };
+
+
+    //-----ORDER----//
+    order.addEventListener('click', function() {
+        
+        let firstNameInput = document.getElementById("firstName");
+        let lastNameInput = document.getElementById("lastName"); 
+        let addressInput = document.getElementById("address");
+        let cityInput = document.getElementById("city");
+        let emailInput = document.getElementById("email");      
+
+        let client = {
+            firstName: firstNameInput.value,
+            lastName: lastNameInput.value,
+            address: addressInput.value,
+            city: cityInput.value,
+            email: emailInput.value
+        }
+        console.log(client);
+
+        // API
+        /**
+         *
+         * Expects request to contain:
+         * contact: {
+         *   firstName: string,
+         *   lastName: string,
+         *   address: string,
+         *   city: string,
+         *   email: string
+         * }
+         * products: [string] <-- array of product _id
+         *
+         */
+        let orderForm;
+        const sendAPI = fetch("http://localhost:3000/api/order/", {
+            method: 'POST',
+            body: JSON.stringify({
+                contact: client,
+                // TODO should pass the array of products ids here
+                products: []
+            })
+        });
+        orderForm = sendAPI.json();
+    });
 });
