@@ -16,6 +16,9 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     
     // TODO use Promise.all( to fetch the price of all products stored in local storage  ((((async-await)))) https://javascript.info/promise-api
     // TODO once all promises are resolved, get the price for each product from the API result and display it
+
+
+    
     let cart = JSON.parse(localStorage.getItem("cart"));
     console.log(cart);
         
@@ -111,8 +114,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             
             let spanTotalPrice=document.getElementById('totalPrice');
         
-            spanTotalPrice.textContent = totalPrice;
-        
+            spanTotalPrice.textContent = totalPrice;        
         };
         
         inputSettingsQuantity.addEventListener("change", function() {     
@@ -126,7 +128,8 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             deleteTargetedProduct.remove();
             
             itemWillRemove = cart.find(product => product.color == deleteTargetedProduct.dataset.color && product.id == deleteTargetedProduct.dataset.id);
-            console.log(itemWillRemove);  
+
+            // console.log(itemWillRemove);  
             
             cart = cart.filter(product => product != itemWillRemove );
             
