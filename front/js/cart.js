@@ -12,20 +12,28 @@ function callTotalQuantity(cart) {
     spanTotalQuantity.textContent = totalQuantity;  
 }; 
 
-window.addEventListener('DOMContentLoaded', async (event) => {
-    
+window.addEventListener('DOMContentLoaded', async (event) => { 
+
+    let cart = JSON.parse(localStorage.getItem("cart"));
+        console.log(cart);
+
     // TODO use Promise.all( to fetch the price of all products stored in local storage  ((((async-await)))) https://javascript.info/promise-api
     // TODO once all promises are resolved, get the price for each product from the API result and display it
-
-
-    
-    let cart = JSON.parse(localStorage.getItem("cart"));
-    console.log(cart);
-        
+     
+ 
     const articleWrapper = document.getElementById('cart__items');
 
-    for ( i=0 ; i < cart.length; i++ ) {
-        
+    for ( i=0 ; i < cart.length; i++ ) {        
+        let priceSecutiy = async function (){
+            let products = fetch("http://localhost:3000/api/products/" + cart[i].id).then(resp => resp.json());
+                // console.log(products);
+            let [resultApi] = await Promise.all([products]);
+                // console.log(resultApi, "function");
+                // console.log(resultApi.price);            
+            priceSecutiy = resultApi.price;
+        }();
+        await priceSecutiy;
+
         let articleKanap = document.createElement('article');
             articleKanap.classList.add('cart__item');
             articleKanap.dataset.id = cart[i].id;
@@ -48,10 +56,10 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             h2NameKanap.innerText = cart[i].name;
 
         let pColorKanap = document.createElement('p');
-            pColorKanap.innerText = cart[i].color;
+            pColorKanap.innerText = cart[i].color;    
 
         let pPriceKanap = document.createElement('p');
-            pPriceKanap.innerText = cart[i].price + "€";
+            pPriceKanap.innerText = priceSecutiy + "€";
 
         let divContentSettingsKanap = document.createElement('div');
             divContentSettingsKanap.classList.add('cart__item__content__settings');
@@ -252,9 +260,8 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         }
         //  console.log(testEmail);
     };
-
-
-    //-----ORDER----//
+    
+    //-----------------ORDER------------------//
     order.addEventListener('click', function() {
         
         let firstNameInput = document.getElementById("firstName");
@@ -263,38 +270,29 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         let cityInput = document.getElementById("city");
         let emailInput = document.getElementById("email");      
 
-        let client = {
+        let contact = {
             firstName: firstNameInput.value,
             lastName: lastNameInput.value,
             address: addressInput.value,
             city: cityInput.value,
             email: emailInput.value
-        }
-        console.log(client);
-
-        // API
-        /**
-         *
-         * Expects request to contain:
-         * contact: {
-         *   firstName: string,
-         *   lastName: string,
-         *   address: string,
-         *   city: string,
-         *   email: string
-         * }
-         * products: [string] <-- array of product _id
-         *
-         */
+        };
+        
+        let idArray = cart.map(element => {
+            return element.id
+        });
+        
+        // ------------API POST-------------//
         let orderForm;
         const sendAPI = fetch("http://localhost:3000/api/order/", {
             method: 'POST',
+
             body: JSON.stringify({
-                contact: client,
-                // TODO should pass the array of products ids here
-                products: []
+                contact: contact,
+                products: idArray
             })
         });
         orderForm = sendAPI.json();
+        
     });
 });
