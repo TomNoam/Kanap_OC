@@ -7,32 +7,28 @@ function callTotalQuantity(cart) {
         });
     } 
     let spanTotalQuantity = document.getElementById('totalQuantity');
-    // TODO do not use eval https://stackoverflow.com/questions/86513/why-is-using-the-javascript-eval-function-a-bad-idea
-    // TODO https://dev.to/spukas/everything-wrong-with-javascript-eval-35on
+    // do not use eval https://stackoverflow.com/questions/86513/why-is-using-the-javascript-eval-function-a-bad-idea
+    // https://dev.to/spukas/everything-wrong-with-javascript-eval-35on
     spanTotalQuantity.textContent = totalQuantity;  
 }; 
 
 window.addEventListener('DOMContentLoaded', async (event) => { 
 
     let cart = JSON.parse(localStorage.getItem("cart"));
-        console.log(cart);
+    console.log(cart);
 
-    // TODO use Promise.all( to fetch the price of all products stored in local storage  ((((async-await)))) https://javascript.info/promise-api
-    // TODO once all promises are resolved, get the price for each product from the API result and display it
-     
- 
     const articleWrapper = document.getElementById('cart__items');
 
-    for ( i=0 ; i < cart.length; i++ ) {        
-        let priceSecutiy = async function (){
+    for ( i = 0 ; i < cart.length; i++ ) { 
+        let priceSecurity = async function () {
             let products = fetch("http://localhost:3000/api/products/" + cart[i].id).then(resp => resp.json());
                 // console.log(products);
             let [resultApi] = await Promise.all([products]);
                 // console.log(resultApi, "function");
                 // console.log(resultApi.price);            
-            priceSecutiy = resultApi.price;
+            priceSecurity = resultApi.price;
         }();
-        await priceSecutiy;
+        await priceSecurity;
 
         let articleKanap = document.createElement('article');
             articleKanap.classList.add('cart__item');
@@ -59,7 +55,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             pColorKanap.innerText = cart[i].color;    
 
         let pPriceKanap = document.createElement('p');
-            pPriceKanap.innerText = priceSecutiy + "€";
+            pPriceKanap.innerText = priceSecurity + "€";
 
         let divContentSettingsKanap = document.createElement('div');
             divContentSettingsKanap.classList.add('cart__item__content__settings');
@@ -260,9 +256,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         }
         //  console.log(testEmail);
     };
-    
+
     //-----------------ORDER------------------//
-    order.addEventListener('click', function() {
+    order.addEventListener('click', async function(e) {
+
+        e.preventDefault();
         
         let firstNameInput = document.getElementById("firstName");
         let lastNameInput = document.getElementById("lastName"); 
@@ -278,21 +276,27 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             email: emailInput.value
         };
         
-        let idArray = cart.map(element => {
+        let products = cart.map(element => {
             return element.id
         });
         
         // ------------API POST-------------//
-        let orderForm;
-        const sendAPI = fetch("http://localhost:3000/api/order/", {
-            method: 'POST',
-
-            body: JSON.stringify({
-                contact: contact,
-                products: idArray
-            })
-        });
-        orderForm = sendAPI.json();
-        
+        try {
+            let orderFormAPICall = await fetch("http://localhost:3000/api/products/order", {
+                method: 'POST',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contact,
+                    products
+                })              
+            });  
+            const orderFormResponse = await orderForm.json();
+            // TODO get back order id and finish fucking project
+            console.log(orderFormResponse);
+        } catch (error) {
+            // TODO feedback to user to inform him/her that order didnt go through
+        }
     });
 });
