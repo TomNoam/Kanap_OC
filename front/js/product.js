@@ -15,7 +15,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     } catch (error) {
         console.error(error);
     }
-    //----------------------- MODIF ----------------
+    //------------------------------------ MODIF ------------------------------------
     let articleIMG = document.querySelector('#ID_img');
 
     let imageKanap = document.createElement('img');
@@ -42,15 +42,27 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         opt.innerText = tabColors[i];
         colorsSelectInput.appendChild(opt);
     }  
-    //--------------CART   
+    //-------------------------------------CART---------------------------------   
     const addButton = document.querySelector('#addToCart');
         
     addButton.addEventListener("click", (event)=>{
             
         const valueColor= colorsSelectInput.value;
 
+        //------------CHOOSE COLOR PLEASE----------
+        if (valueColor == "") {
+            alert("Merci de sélectionner une couleur");
+            return;
+        }
+
         let quantityTake = document.querySelector('#quantity');
         const quantitySelected = quantityTake.value;
+
+        //-------------QUANTITY RESPECT--------------
+        if (quantitySelected <= 0 || quantitySelected >= 100) {
+            alert("Quantité impossible, merci de contacter le service client pour des commandes supérieures à 100 unités ou réessayez avec une valeure de 1 à 100. Merci");
+            return;
+        }
 
         let choiceKanap = {
             id: data._id,
@@ -61,6 +73,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             URL: data.imageUrl,
             altTxt: data.altTxt
         }
+
         let cart = [];
         let cartNeedsPushing = true;
         if (null != localStorage.getItem("cart")) {  // we verify that local storage already includes a cart

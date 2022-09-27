@@ -138,7 +138,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     callTotalPrice(cart);
     //---------------------------FORM-----------------------------------//
     let form = document.getElementsByClassName('cart__order__form');
-    //----FIRSTNAME----//
+    //FIRSTNAME//
     firstName.addEventListener('change', function() {
         validFirstName(this);
     });
@@ -157,7 +157,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             errorFirstName.innerText = "Invalide";
         }
     };
-    //----LASTNAME----//
+    //LASTNAME//
     lastName.addEventListener('change', function() {
         validLastName(this);
     });
@@ -176,7 +176,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             errorLastName.innerText = "Invalide";
         }
     };    
-    //----ADDRESS----//
+    //ADDRESS//
     address.addEventListener('change', function() {
         validAddress(this);
     });
@@ -195,7 +195,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             errorAddress.innerText = "Invalide";
         }
     };
-    //----CITY----//
+    //CITY//
     city.addEventListener('change', function() {
         validCity(this);
     });
@@ -214,7 +214,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             errorCity.innerText = "Invalide";
         }
     };
-    //----EMAIL----//
+    //EMAIL//
     email.addEventListener('change', function() {
         validEmail(this);
     });
@@ -269,11 +269,12 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             });  
             const orderFormResponse = await orderFormAPICall.json();            
             console.log(orderFormResponse.orderId);
-                       
-            return window.location.href = "./confirmation.html" + "?id=" + orderFormResponse.orderId;
             
-        } catch (error) {            
-           // TODO feedback to user to inform him/her that order didnt go through
+            if (orderFormAPICall.status == 201){
+            return window.location.href = "./confirmation.html" + "?id=" + orderFormResponse.orderId;
+            }
+        } catch (error) {    
+            alert("Il s'est produit un problème, merci de réessayer. Si le problème persiste, merci de réessayer plus tard.")
         }
     });
 });
