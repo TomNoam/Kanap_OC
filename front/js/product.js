@@ -4,7 +4,6 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     const productID = window.location.search;
     const urlParams = new URLSearchParams(productID);
     const idKanap = urlParams.get('id');
-
     // ------------then request API with the correct ID--------------
     let data;
     try {
@@ -16,10 +15,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     } catch (error) {
         console.error(error);
     }
-    // console.log(data);
-
     //----------------------- MODIF ----------------
-
     let articleIMG = document.querySelector('#ID_img');
 
     let imageKanap = document.createElement('img');
@@ -46,7 +42,6 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         opt.innerText = tabColors[i];
         colorsSelectInput.appendChild(opt);
     }  
-
     //--------------CART   
     const addButton = document.querySelector('#addToCart');
         
@@ -66,7 +61,6 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             URL: data.imageUrl,
             altTxt: data.altTxt
         }
-
         let cart = [];
         let cartNeedsPushing = true;
         if (null != localStorage.getItem("cart")) {  // we verify that local storage already includes a cart
@@ -79,13 +73,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                 cartNeedsPushing = false;
             } 
         } 
-
         if (cartNeedsPushing) {
             cart.push(choiceKanap);
         }
         localStorage.setItem("cart", JSON.stringify(cart));
     });
-
 });
 
 

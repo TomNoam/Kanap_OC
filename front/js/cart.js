@@ -7,8 +7,6 @@ function callTotalQuantity(cart) {
         });
     } 
     let spanTotalQuantity = document.getElementById('totalQuantity');
-    // do not use eval https://stackoverflow.com/questions/86513/why-is-using-the-javascript-eval-function-a-bad-idea
-    // https://dev.to/spukas/everything-wrong-with-javascript-eval-35on
     spanTotalQuantity.textContent = totalQuantity;  
 }; 
 
@@ -20,12 +18,10 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     const articleWrapper = document.getElementById('cart__items');
 
     for ( i = 0 ; i < cart.length; i++ ) { 
+
         let priceSecurity = async function () {
             let products = fetch("http://localhost:3000/api/products/" + cart[i].id).then(resp => resp.json());
-                // console.log(products);
-            let [resultApi] = await Promise.all([products]);
-                // console.log(resultApi, "function");
-                // console.log(resultApi.price);            
+            let [resultApi] = await Promise.all([products]);                       
             priceSecurity = resultApi.price;
         }();
         await priceSecurity;
@@ -89,11 +85,9 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         divContentKanap.append(divContentDescriptionKanap, divContentSettingsKanap);
         articleKanap.append(divImgKanap, divContentKanap);
         articleWrapper.appendChild(articleKanap); 
-
-
         //----------------------- QUANTITY CHANGE---------------------------//
         inputSettingsQuantity.addEventListener("change", function() {
-            
+
             pSettingsQuantity.innerText = inputSettingsQuantity.value;
 
             let valueHasTochange = inputSettingsQuantity.value;
@@ -124,7 +118,6 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         inputSettingsQuantity.addEventListener("change", function() {     
             callTotalPrice(cart);
         });
-
         //---------------------------DELETE FUNCTION---------------------------//
         divDeleteSettings.addEventListener('click', function() {
             let deleteTargetedProduct = divDeleteSettings.closest('article');
@@ -133,25 +126,18 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             
             itemWillRemove = cart.find(product => product.color == deleteTargetedProduct.dataset.color && product.id == deleteTargetedProduct.dataset.id);
 
-            // console.log(itemWillRemove);  
-            
             cart = cart.filter(product => product != itemWillRemove );
             
-            // console.log(cart);
-
             localStorage.setItem("cart", JSON.stringify(cart));
 
             callTotalQuantity(cart); 
             callTotalPrice(cart);
         });
-    }
-          
+    }          
     callTotalQuantity(cart); 
     callTotalPrice(cart);
-
     //---------------------------FORM-----------------------------------//
     let form = document.getElementsByClassName('cart__order__form');
-
     //----FIRSTNAME----//
     firstName.addEventListener('change', function() {
         validFirstName(this);
@@ -170,9 +156,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         }else{
             errorFirstName.innerText = "Invalide";
         }
-        //  console.log(testFirstName);
     };
-
     //----LASTNAME----//
     lastName.addEventListener('change', function() {
         validLastName(this);
@@ -191,9 +175,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         }else{
             errorLastName.innerText = "Invalide";
         }
-        //  console.log(testLastName);
-    };
-    
+    };    
     //----ADDRESS----//
     address.addEventListener('change', function() {
         validAddress(this);
@@ -212,9 +194,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         }else{
             errorAddress.innerText = "Invalide";
         }
-        //  console.log(testAddress);
     };
-
     //----CITY----//
     city.addEventListener('change', function() {
         validCity(this);
@@ -233,9 +213,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         }else{
             errorCity.innerText = "Invalide";
         }
-        //  console.log(testCity);
     };
-
     //----EMAIL----//
     email.addEventListener('change', function() {
         validEmail(this);
@@ -254,9 +232,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         }else{
             errorEmail.innerText = "Invalide";
         }
-        //  console.log(testEmail);
     };
-
     //-----------------ORDER------------------//
     order.addEventListener('click', async function(e) {
 
@@ -278,8 +254,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         
         let products = cart.map(element => {
             return element.id
-        });
-        
+        });        
         // ------------API POST-------------//
         try {
             let orderFormAPICall = await fetch("http://localhost:3000/api/products/order", {
@@ -292,11 +267,13 @@ window.addEventListener('DOMContentLoaded', async (event) => {
                     products
                 })              
             });  
-            const orderFormResponse = await orderForm.json();
-            // TODO get back order id and finish fucking project
-            console.log(orderFormResponse);
-        } catch (error) {
-            // TODO feedback to user to inform him/her that order didnt go through
+            const orderFormResponse = await orderFormAPICall.json();            
+            console.log(orderFormResponse.orderId);
+                       
+            return window.location.href = "./confirmation.html" + "?id=" + orderFormResponse.orderId;
+            
+        } catch (error) {            
+           // TODO feedback to user to inform him/her that order didnt go through
         }
     });
 });

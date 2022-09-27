@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', async (event) => {
 
     let data;
-    // get products by requesting the API
+    
     try {
         const APICallRes = await fetch("http://localhost:3000/api/products");
         data = await APICallRes.json();
@@ -11,12 +11,10 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     } catch (error) {
         console.error(error);
     }
-    // display products from the response obtained from the API
+
     const productsWrapper = document.getElementById("items");
 
     for ( i=0 ; i < data.length; i++ ) {
-        // console.log(data[i]);
-
         let newLinkKanap = document.createElement('a');
             newLinkKanap.href = "./product.html?id=" + data[i]._id;
 
