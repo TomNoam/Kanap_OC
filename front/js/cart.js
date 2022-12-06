@@ -21,8 +21,14 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
         let priceSecurity = async function () {
             let products = fetch("http://localhost:3000/api/products/" + cart[i].id).then(resp => resp.json());
-            let [resultApi] = await Promise.all([products]);                       
-            priceSecurity = resultApi.price;
+            let [resultApi] = await Promise.all([products]);
+
+            let priceMoreSecured = resultApi.price;
+
+            const samePriceExists = cart.find(product => product.id == cart[i].id && priceMoreSecured == cart[i].price);
+            console.log(samePriceExists.price);
+
+            priceSecurity = samePriceExists.price;
         }();
         await priceSecurity;
 
@@ -102,19 +108,28 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             callTotalQuantity(cart);
         });
         //----------------------------TOTAL PRICE-------------------------//
+        // let priceSecurity = async function () {
+        //     let products = fetch("http://localhost:3000/api/products/" + cart[i].id).then(resp => resp.json());
+        //     let [resultApi] = await Promise.all([products]);                       
+        //     priceSecurity = resultApi.price;
+        // }();
+        // await priceSecurity;
         function callTotalPrice (cart) {
             let totalPrice= 0;
+            
             if(cart) {
-                cart.forEach((product) => {
+                // let cart = JSON.parse(localStorage.getItem("cart"));
+                // console.log(cart);
+                cart.forEach((product) => {  
+                                        
                     totalPrice += parseInt(product.quantity)*parseInt(product.price);
                 });
             }
             
             let spanTotalPrice=document.getElementById('totalPrice');
         
-            spanTotalPrice.textContent = totalPrice;        
+            spanTotalPrice.textContent = totalPrice;
         };
-        
         inputSettingsQuantity.addEventListener("change", function() {     
             callTotalPrice(cart);
         });
@@ -235,7 +250,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     };
     //-----------------ORDER------------------//
     order.addEventListener('click', async function(e) {
-
+        
         e.preventDefault();
         
         let firstNameInput = document.getElementById("firstName");
