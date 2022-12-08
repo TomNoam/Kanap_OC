@@ -10,6 +10,22 @@ function callTotalQuantity(cart) {
     spanTotalQuantity.textContent = totalQuantity;  
 }; 
 
+async function callTotalPrice(cart) { 
+    let totalPrice = 0;
+    for (let i = 0; i < cart.length; i++) {
+        let priceSecurity = async function () {
+            let products = fetch("http://localhost:3000/api/products/" + cart[i].id).then(resp => resp.json());
+            let [resultApi] = await Promise.all([products]);
+            priceSecurity = resultApi.price;
+        }();
+        await priceSecurity;
+        document.getElementById(`pricetag_${cart[i].id}_${cart[i].color}`).innerText = priceSecurity;
+        totalPrice += parseInt(priceSecurity) * parseInt(cart[i].quantity);
+    }
+    let spanTotalPrice = document.getElementById('totalPrice');
+    spanTotalPrice.textContent = totalPrice;  
+}; 
+
 window.addEventListener('DOMContentLoaded', async (event) => { 
 
     let cart = JSON.parse(localStorage.getItem("cart"));
@@ -18,19 +34,6 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     const articleWrapper = document.getElementById('cart__items');
 
     for ( i = 0 ; i < cart.length; i++ ) { 
-
-        let priceSecurity = async function () {
-            let products = fetch("http://localhost:3000/api/products/" + cart[i].id).then(resp => resp.json());
-            let [resultApi] = await Promise.all([products]);
-
-            let priceMoreSecured = resultApi.price;
-
-            const samePriceExists = cart.find(product => product.id == cart[i].id && priceMoreSecured == cart[i].price);
-            console.log(samePriceExists.price);
-
-            priceSecurity = samePriceExists.price;
-        }();
-        await priceSecurity;
 
         let articleKanap = document.createElement('article');
             articleKanap.classList.add('cart__item');
@@ -57,7 +60,8 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             pColorKanap.innerText = cart[i].color;    
 
         let pPriceKanap = document.createElement('p');
-            pPriceKanap.innerText = priceSecurity + "€";
+        pPriceKanap.id = `pricetag_${cart[i].id}_${cart[i].color}`;
+            pPriceKanap.innerText = "0 €";
 
         let divContentSettingsKanap = document.createElement('div');
             divContentSettingsKanap.classList.add('cart__item__content__settings');
@@ -92,7 +96,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         articleKanap.append(divImgKanap, divContentKanap);
         articleWrapper.appendChild(articleKanap); 
         //----------------------- QUANTITY CHANGE---------------------------//
-        inputSettingsQuantity.addEventListener("change", function() {
+        inputSettingsQuantity.addEventListener("change", () => {
 
             pSettingsQuantity.innerText = inputSettingsQuantity.value;
 
@@ -105,36 +109,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             }
             localStorage.setItem("cart", JSON.stringify(cart));
 
+            callTotalPrice(cart);
             callTotalQuantity(cart);
         });
-        //----------------------------TOTAL PRICE-------------------------//
-        // let priceSecurity = async function () {
-        //     let products = fetch("http://localhost:3000/api/products/" + cart[i].id).then(resp => resp.json());
-        //     let [resultApi] = await Promise.all([products]);                       
-        //     priceSecurity = resultApi.price;
-        // }();
-        // await priceSecurity;
-        function callTotalPrice (cart) {
-            let totalPrice= 0;
-            
-            if(cart) {
-                // let cart = JSON.parse(localStorage.getItem("cart"));
-                // console.log(cart);
-                cart.forEach((product) => {  
-                                        
-                    totalPrice += parseInt(product.quantity)*parseInt(product.price);
-                });
-            }
-            
-            let spanTotalPrice=document.getElementById('totalPrice');
-        
-            spanTotalPrice.textContent = totalPrice;
-        };
-        inputSettingsQuantity.addEventListener("change", function() {     
-            callTotalPrice(cart);
-        });
         //---------------------------DELETE FUNCTION---------------------------//
-        divDeleteSettings.addEventListener('click', function() {
+        divDeleteSettings.addEventListener('click', () => {
             let deleteTargetedProduct = divDeleteSettings.closest('article');
 
             deleteTargetedProduct.remove();
@@ -145,10 +124,10 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             
             localStorage.setItem("cart", JSON.stringify(cart));
 
-            callTotalQuantity(cart); 
             callTotalPrice(cart);
+            callTotalQuantity(cart); 
         });
-    }          
+    }  
     callTotalQuantity(cart); 
     callTotalPrice(cart);
     //---------------------------FORM-----------------------------------//

@@ -67,7 +67,6 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         let choiceKanap = {
             id: data._id,
             name: data.name,
-            price: data.price,
             color: valueColor,
             quantity: quantitySelected,
             URL: data.imageUrl,
