@@ -25,9 +25,8 @@ async function callTotalPrice(cart) {
     let spanTotalPrice = document.getElementById('totalPrice');
     spanTotalPrice.textContent = totalPrice;  
 }; 
-
 window.addEventListener('DOMContentLoaded', async (event) => { 
-
+    
     let cart = JSON.parse(localStorage.getItem("cart"));
     console.log(cart);
 
@@ -60,7 +59,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             pColorKanap.innerText = cart[i].color;    
 
         let pPriceKanap = document.createElement('p');
-        pPriceKanap.id = `pricetag_${cart[i].id}_${cart[i].color}`;
+            pPriceKanap.id = `pricetag_${cart[i].id}_${cart[i].color}`;
             pPriceKanap.innerText = "0 €";
 
         let divContentSettingsKanap = document.createElement('div');
@@ -131,7 +130,6 @@ window.addEventListener('DOMContentLoaded', async (event) => {
     callTotalQuantity(cart); 
     callTotalPrice(cart);
     //---------------------------FORM-----------------------------------//
-    let form = document.getElementsByClassName('cart__order__form');
     //FIRSTNAME//
     firstName.addEventListener('change', function() {
         validFirstName(this);
@@ -146,9 +144,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         let errorFirstName = document.querySelector('#firstNameErrorMsg');
 
         if (testFirstName) {
-            errorFirstName.innerText = "";          
+            errorFirstName.innerText = "";              
+            document.getElementById("order").disabled = false;                     
         }else{
             errorFirstName.innerText = "Invalide";
+            document.getElementById("order").disabled = true;
         }
     };
     //LASTNAME//
@@ -165,9 +165,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         let errorLastName = document.querySelector('#lastNameErrorMsg');
 
         if (testLastName) {
-            errorLastName.innerText = "";          
+            errorLastName.innerText = "";
+            document.getElementById("order").disabled = false;                       
         }else{
             errorLastName.innerText = "Invalide";
+            document.getElementById("order").disabled = true;  
         }
     };    
     //ADDRESS//
@@ -175,7 +177,7 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         validAddress(this);
     });
 
-    const validAddress = function(inputAddress) {
+    const validAddress = function(inputAddress) {  
         let addressRegExp = new RegExp(
             /^[ a-zA-ZÀ-úœ0-9999'\-\’]{5,40}$/, 'g'
         );
@@ -184,9 +186,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         let errorAddress = document.querySelector('#addressErrorMsg');
 
         if (testAddress) {
-            errorAddress.innerText = "";          
+            errorAddress.innerText = ""; 
+            document.getElementById("order").disabled = false;           
         }else{
             errorAddress.innerText = "Invalide";
+            document.getElementById("order").disabled = true;  
         }
     };
     //CITY//
@@ -203,9 +207,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         let errorCity = document.querySelector('#cityErrorMsg');
 
         if (testCity) {
-            errorCity.innerText = "";          
+            errorCity.innerText = "";
+            document.getElementById("order").disabled = false;            
         }else{
             errorCity.innerText = "Invalide";
+            document.getElementById("order").disabled = true;  
         }
     };
     //EMAIL//
@@ -222,12 +228,15 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         let errorEmail = document.querySelector('#emailErrorMsg');
 
         if (testEmail) {
-            errorEmail.innerText = "";          
+            errorEmail.innerText = "";
+            document.getElementById("order").disabled = false;            
         }else{
             errorEmail.innerText = "Invalide";
+            document.getElementById("order").disabled = true;  
         }
     };
     //-----------------ORDER------------------//
+
     order.addEventListener('click', async function(e) {
         
         e.preventDefault();

@@ -1,4 +1,5 @@
 window.addEventListener('DOMContentLoaded', async (event) => {
+    localStorage.clear();
 
     const orderID = window.location.search;
     const urlParams = new URLSearchParams(orderID);
